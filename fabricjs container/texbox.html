@@ -1,0 +1,252 @@
+<SOCTYPE html>
+<html>
+    <head>
+        <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+        <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/fabric.js/1.6.0/fabric.min.js"></script>
+        <script type="text/javascript" src="container.js"></script>
+        <script type="text/javascript" src="textbox.js"></script>
+    </head>
+    <body>
+        <canvas id="paper" width="800" height="800" style="border:1px solid #ccc"></canvas>
+
+        <script type="text/javascript">
+            (function() {
+                fabric.Textbox.getTextboxControlVisibility = function() {
+                    return {
+                        tl: true,
+                        tr: true,
+                        br: true,
+                        bl: true,
+                        ml: false,
+                        mt: false,
+                        mr: false,
+                        mb: false,
+                        mtr: true
+                    };
+                }
+
+                fabric.Container.getTextboxControlVisibility = function() {
+                    return {
+                        tl: false,
+                        tr: false,
+                        br: false,
+                        bl: false,
+                        ml: false,
+                        mt: false,
+                        mr: false,
+                        mb: false,
+                        mtr: false
+                    };
+                }
+
+            }).call(this);
+
+
+//Now there are two functions in your main controller JS file that will resize down and trim the additional text, you can use them wherever you need them but you need to change the following functions to adjust for your needs
+
+var canvas = new fabric.Canvas('paper');
+
+
+fabric.Object.prototype.transparentCorners = false;
+
+fabric.Image.fromURL('https://orig00.deviantart.net/3976/f/2013/206/1/9/simple_linux_logo_by_dablim-d5k4ghu.png', function(img) {
+    
+    var patternSourceCanvas = new fabric.StaticCanvas();
+    
+    patternSourceCanvas.setBackgroundColor('red', patternSourceCanvas.renderAll.bind(patternSourceCanvas));
+    patternSourceCanvas.setBackgroundImage(img, patternSourceCanvas.renderAll.bind(patternSourceCanvas), {
+        top: 50,
+        left: 100,
+        originX: 'left',
+        originY: 'top'
+    });
+
+    patternSourceCanvas.renderAll()
+
+    const container = {
+        width: 400,
+        height: 400,
+        top: 200,
+        left: 200
+    }
+
+    var pattern = function(t){
+        return new fabric.Pattern({
+          source: function() {
+            // console.log('++++++', t.width);
+            patternSourceCanvas.setDimensions({
+              width: img.getWidth() + ( (t.width || container.width) - img.getWidth() ),
+              height: img.getHeight() + ( (t.height || container.height) - img.getHeight() ),
+            });
+            patternSourceCanvas.renderAll();
+            return patternSourceCanvas.getElement();
+          },
+          repeat: 'no-repeat',
+          offsetX: 0
+        });
+    }
+
+    const rect = new fabric.Rect({
+        left: container.left,
+        top: container.top,
+        angle: 0,
+        width: container.width,
+        height: container.height,
+        fill: pattern,
+        objectCaching: false
+    });
+
+    rect.on('scaling', function(t){
+        const scaleX = this.get('scaleX');
+        const scaleY = this.get('scaleY');
+        const width = this.get('width');
+        const height = this.get('height');
+        this.set({
+            scaleX: 1,
+            scaleY: 1,
+            width: width * scaleX,
+            height: height * scaleY,
+            fill: pattern(this)
+        })
+    });
+
+    // rect.on('click', function(e){
+    //     e.preventDefaults();
+    //     e.stopPropagation();
+    //     alert(11);
+    // });
+
+    canvas.add(rect);
+    canvas.setActiveObject(rect);
+
+});
+
+
+
+
+
+//=====================================================================
+// var rect = new fabric.Rect({ 
+//   left: 40, 
+//   top: 150,
+//   width: 200,
+//   height: 200
+// });
+// canvas.add(rect);
+
+var container = new fabric.Container({ 
+  left: 200, 
+  top: 400,
+  width: 400,
+  height: 400,
+  fill: 'red',
+  src: 'https://i.pinimg.com/736x/b9/e5/e9/b9e5e928c23917283fb221c951ca635b--valentine-cards-be-my-valentine.jpg',
+  angle: 0
+});
+
+// container.centeredRotation = false;
+
+
+// container.on('moving', function(){
+//   console.log('____Container');
+// });
+
+// canvas.add(container);
+
+// container.on('rotating', function(e){
+//     console.log('___----rotating', e);
+//     // this.set('originX', 'right');
+//     // this.set('originY', 'bottom');
+//     // e.target.translate(0,100)
+// });
+
+// var rect1 = new fabric.Rect({ 
+//   left: 70, 
+//   top: 200,
+//   width: 100,
+//   height: 100,
+//   fill: 'green'
+// });
+// canvas.add(rect1);
+
+// fabric.Image.fromURL('https://lh3.googleusercontent.com/Dq-mZ5mmdE6aFPeD61DNlVTwYSI75UwHBYDq_BxBZOMSzCBnQ5OCC4-LjfP42tDlyw=w300', function(img) {
+fabric.Image.fromURL('https://i.pinimg.com/736x/b9/e5/e9/b9e5e928c23917283fb221c951ca635b--valentine-cards-be-my-valentine.jpg', function(img) {
+    img.set({
+      left: 150,
+      top: 250,
+      angle: 0,
+      // width: 400,
+      // height: 400,
+      clipTo: function (ctx) {
+        ctx.rect(-(img.width / 2),-(img.height/2), img.width, img.height);
+        ctx.fillStyle="red";
+        ctx.fill();
+      }
+    });
+
+    img.set({
+      shiftLeft: img.get('left') - img.get('width') / 2,
+      shiftTop: img.get('top') - img.get('height') / 2
+    });
+
+console.log('________________________________-imgimgimg', img);
+
+    // var rect = new fabric.Rect({ 
+    //     left: 40, 
+    //     top: 150,
+    //     width: 400,
+    //     height: 400
+    // });
+
+    // canvas.add(rect);
+    // canvas.add(img).setActiveObject(img);
+// rect.set('globalCompositeOperation','destination-atop');
+
+    // group = new fabric.Group();
+    // group.addWithUpdate(rect);
+    // group.addWithUpdate(img);
+    // group.set('globalCompositeOperation','source-atop');
+    // canvas.add(group);
+  });
+
+
+// group = new fabric.Group();
+// group.addWithUpdate(rect);
+// group.addWithUpdate(rect1);
+// canvas.add(group);
+
+
+
+// adding text
+var labeledRect = new fabric.LabeledRect( 'Currently resizing a text element simple scales the text. This shouldn not be the case, instead resizing should re-define the bounding box around the text.', { 
+  left: 100, 
+  top: 50,
+  width: 200,
+  height: 55,
+  backgroundColor: 'red',
+  color: '#fff'
+});
+// main.hasRotatingPoint = true;
+// text.editable= true
+
+canvas.add(labeledRect);
+
+fabric.util.addListener(canvas.upperCanvasEl, 'dblclick', function(e) {
+    if (canvas.findTarget(e)) {
+        const target = canvas.findTarget(e);
+        // const objType = canvas.findTarget(e).type;
+        console.log(target);
+        // if (target.objType === 'container') {
+            // alert('double clicked on a container!');
+            const dblClick = !target.get('dblClick') ? false : true;
+            target.set('dblClick', !dblClick)
+            // console.log(target.xxxxxxx);
+        // }
+    }
+});
+
+        </script>
+
+    </body>
+</html>
+
