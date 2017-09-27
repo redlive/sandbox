@@ -13,6 +13,9 @@ fabric.Container = fabric.util.createClass(fabric.Rect, {
     this.applyPattern();
     this.on('scaling', this._resize);
     this.on('moving', this._move);
+
+    this.set('defaultBorderColor', this.get('borderColor'));
+    this.set('defaultCornerColor', this.get('cornerColor'));
   },
 
 
@@ -57,10 +60,23 @@ fabric.Container = fabric.util.createClass(fabric.Rect, {
     });
   },
 
+  _setBorder: function(){
+    this.set({
+      borderColor:'orange',
+      cornerColor:'orange'
+    });
+  },
+
+  _resetBorder: function(){
+    this.set({
+      borderColor: this.get('defaultBorderColor'),
+      cornerColor: this.get('defaultCornerColor')
+    });
+  },
 
   _onDoubleClick: function(){
-    const canvas = this.get('canvas');
-    const ctx = canvas.getContext("2d");
+    // const canvas = this.get('canvas');
+    // const ctx = canvas.getContext("2d");
 
   // console.log('ctxctxctx', ctx);
 
@@ -68,20 +84,10 @@ fabric.Container = fabric.util.createClass(fabric.Rect, {
     this.set('dblClick', dblClick);
     // this.callSuper('initialize'); 
 
-    if (dblClick) {
-      this.set({
-        borderColor:'orange',
-        cornerColor:'orange', 
-        // padding: 10
-      });
-    } else {
-      this.set({'borderColor':'blue','cornerColor':'blue', 
-        // padding: 0
-      });
-    }
-
+    dblClick ? this._setBorder() : this._resetBorder();
+      
     this.setCoords();
-    this.canvas.renderAll();
+    this.get('canvas').renderAll();
   },
 
   _pattern: function(t){
@@ -100,7 +106,7 @@ fabric.Container = fabric.util.createClass(fabric.Rect, {
   },
 
  _moveContainerContent: function(){
-  this.callSuper('_setCornerCoords');
+  // this.callSuper('_setCornerCoords');
   // var pointer = canvas.getPointer(event.e);
   // var posX = pointer.x;
   // var posY = pointer.y;
@@ -111,13 +117,13 @@ fabric.Container = fabric.util.createClass(fabric.Rect, {
     // const scaleY = this.get('scaleY');
     // const width = this.get('width');
     // const height = this.get('height');
-    const originalState = this.get('originalState');
-    const content = this.get('content');
+    // const originalState = this.get('originalState');
+    // const content = this.get('content');
     // content.image.left *= scaleX;
     // content.image.top *= scaleY;
     // content.left *= scaleX;
     // content.top *= scaleY;
-    content.image.left = originalState.left - content.left;
+    // content.image.left = originalState.left - content.left;
     // content.left = content.image.left;
     // content.image.top = originalState.top;
     // content.top = content.image.top;
@@ -125,7 +131,7 @@ fabric.Container = fabric.util.createClass(fabric.Rect, {
 
       // width: width * scaleX,
       // height: height * scaleY,
-      content
+     // content
     });
     // this.setCoords();
     this.applyPattern();
@@ -133,22 +139,26 @@ fabric.Container = fabric.util.createClass(fabric.Rect, {
 
 
   _resizeContainer: function(){
-
+    const content = this.get('content');
     const scaleX = this.get('scaleX');
     const scaleY = this.get('scaleY');
-    const top = this.get('top');
-    const left = this.get('left');
     const width = this.get('width');
     const height = this.get('height');
-    const content = this.get('content');
-    const originalState = this.get('originalState');
-    // content.image.left *= scaleX;
-    // content.image.top *= scaleY;
-    content.left -=  left;
-content.image.left = content.left;
-    console.log('+++++++++++++++++++++++++++++++++++++++_resizeContainer',content.left);
 
-    // content.top *= scaleY;
+    const left = this.get('left');
+    const originalLeft = this.get('originalState').left;
+    const leftShift = originalLeft - left;
+
+    const top = this.get('top');
+    const originalTop = this.get('originalState').top;
+    const topShift = originalTop - top;
+
+    content.left = content.originalState.left + leftShift;
+    content.image.left = content.left;
+
+    content.top = content.originalState.top + topShift;
+    content.image.top = content.top;
+    
     this.set({
       scaleX: 1,
       scaleY: 1,
@@ -156,17 +166,13 @@ content.image.left = content.left;
       height: height * scaleY,
       content
     });
-// container.set('initialLoad', false);
-        // this.applyPattern();
-    // this.setCoords();
-// const image = this.get('image');
-// image.width *= scaleX;
-// image.height *= scaleY;
-    // this.set('image', image);
-    // this.set('patternSourceCanvas.height', height * scaleY);
   },
 
   _resizeContainerContent: function(){
+    // this.set({
+    //       lockMovementX: true,
+    //       lockMovementY: true
+    //     });
     const content = this.get('content');
     const scaleX = this.get('scaleX');
     const scaleY = this.get('scaleY');
@@ -177,12 +183,14 @@ content.image.left = content.left;
     // const { image } = content;
     content.image.width = width * scaleX;
     content.image.height = height * scaleY;
+    content.width = content.image.width;
+    content.height = content.image.height;
     this.set({
-      scaleX: 1,
-      scaleY: 1,
+      // scaleX: 1,
+      // scaleY: 1,
       content
     });
-    // this.setCoords();
+    this.setCoords();
   },
 
   _move: function(){

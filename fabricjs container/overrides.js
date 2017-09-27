@@ -22,7 +22,32 @@ console.log('++++++++++++++++++++++ _setLineDash');
       }
     },    
 
+saveState: function(options) {
+  console.log('++++++++++++++++++++++ saveState');
+    this.stateProperties.forEach(function(prop) {
+      this.originalState[prop] = this.get(prop);
+      if (this.content) {
+        this.content.originalState = this.content.originalState || {};
+        if (['width', 'height', 'top', 'left'].indexOf(prop) > -1) {
+          this.content.originalState[prop] = this.get('content')[prop];
+        }
+      }
+    }, this);
 
+    if (options && options.stateProperties) {
+      options.stateProperties.forEach(function(prop) {
+        this.originalState[prop] = this.get(prop);
+        if (this.content) {
+          this.content.originalState = this.content.originalState || {};
+          if (['width', 'height', 'top', 'left'].indexOf(prop) > -1) {
+            this.content.originalState[prop] = this.get('content')[prop];
+          }
+        }
+      }, this);
+    }
+
+    return this;
+  },
 
 
     _drawControl: function(control, ctx, methodName, left, top, styleOverride) {
