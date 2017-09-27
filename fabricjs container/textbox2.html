@@ -25,6 +25,7 @@
             fill: 'red',
             angle: 0,
             content: {
+                angle: 45,
                 left: 40,
                 top: 70,
                 width: 320,
@@ -33,8 +34,6 @@
             }
         });
         canvas.add(container);
-
-
 
         fabric.util.addListener(canvas.upperCanvasEl, 'dblclick', function(e) {
             const target = canvas.findTarget(e);

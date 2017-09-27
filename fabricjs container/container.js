@@ -13,6 +13,7 @@ fabric.Container = fabric.util.createClass(fabric.Rect, {
         this.applyPattern();
         this.on('scaling', this._resize);
         this.on('moving', this._move);
+        this.on('rotating', this._rotate);
 
         this.set('defaultBorderColor', this.get('borderColor'));
         this.set('defaultCornerColor', this.get('cornerColor'));
@@ -42,7 +43,8 @@ fabric.Container = fabric.util.createClass(fabric.Rect, {
                 top: content.top,
                 left: content.left,
                 width: content.width,
-                height: content.height
+                height: content.height,
+                angle: content.angle
                 // originX: 'left',
                 // originY: 'top'
             });
@@ -105,6 +107,19 @@ fabric.Container = fabric.util.createClass(fabric.Rect, {
         });
     },
 
+    _rotateContainerContent: function() {
+        const content = this.get('content');
+        const angle = this.get('angle');
+
+        content.angle = content.originalState.angle + angle;
+
+        this.set({
+            angle: this.get('originalState').angle,
+            content
+        });
+        this.applyPattern();
+    },
+
     _moveContainerContent: function() {
         const content = this.get('content');
         const top = this.get('top');
@@ -117,7 +132,7 @@ fabric.Container = fabric.util.createClass(fabric.Rect, {
 
         this.set({
             top: this.get('originalState').top,
-            left: this.get('originalState').left,
+            left: this.get('originalState').left
         });
         this.applyPattern();
     },
@@ -172,18 +187,15 @@ fabric.Container = fabric.util.createClass(fabric.Rect, {
     _move: function() {
         if (!this.get('dblClick')) {
             // this._moveContainer();
-            // this.set({
-            //     lockMovementX: false,
-            //     lockMovementY: false
-            // });
         } else {
-            // this.set({
-            //     lockMovementX: true,
-            //     lockMovementY: true
-            // });
             this._moveContainerContent();
         }
-        // this.setCoords();
+    },
+
+    _rotate: function() {
+        if (this.get('dblClick')) {
+            this._rotateContainerContent();
+        }
     },
 
     _resize: function() {

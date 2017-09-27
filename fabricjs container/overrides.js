@@ -27,7 +27,7 @@
                 this.originalState[prop] = this.get(prop);
                 if (this.content) {
                     this.content.originalState = this.content.originalState || {};
-                    if (['width', 'height', 'top', 'left'].indexOf(prop) > -1) {
+                    if (['angle', 'width', 'height', 'top', 'left'].indexOf(prop) > -1) {
                         this.content.originalState[prop] = this.get('content')[prop];
                     }
                 }
@@ -38,7 +38,7 @@
                     this.originalState[prop] = this.get(prop);
                     if (this.content) {
                         this.content.originalState = this.content.originalState || {};
-                        if (['width', 'height', 'top', 'left'].indexOf(prop) > -1) {
+                        if (['angle', 'width', 'height', 'top', 'left'].indexOf(prop) > -1) {
                             this.content.originalState[prop] = this.get('content')[prop];
                         }
                     }
@@ -333,8 +333,6 @@
             const typeConteiner = (this.type === 'container' && this.dblClick);
             console.log('++++++++++++++++++++++ drawBorders');
             styleOverride = styleOverride || {};
-
-            console.log('_______________________________________', this, this.get('scaleX'));
 
             var wh = this._calculateCurrentDimensions(),
                 strokeWidth = 1 / this.borderScaleFactor,
