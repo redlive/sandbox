@@ -42,7 +42,7 @@ fabric.Container = fabric.util.createClass(fabric.Rect, {
                 top: content.top,
                 left: content.left,
                 width: content.width,
-                height: content.height,
+                height: content.height
                 // originX: 'left',
                 // originY: 'top'
             });
@@ -80,7 +80,7 @@ fabric.Container = fabric.util.createClass(fabric.Rect, {
 
         // console.log('ctxctxctx', ctx);
 
-        const dblClick = !this.get('dblClick') ? true : false;
+        const dblClick = !this.get('dblClick');
         this.set('dblClick', dblClick);
         // this.callSuper('initialize');
 
@@ -106,34 +106,19 @@ fabric.Container = fabric.util.createClass(fabric.Rect, {
     },
 
     _moveContainerContent: function() {
-        // this.callSuper('_setCornerCoords');
-        // var pointer = canvas.getPointer(event.e);
-        // var posX = pointer.x;
-        // var posY = pointer.y;
-        // console.log(posX+", "+posY);
-        console.log('______________moveContainerContent', this);
-        // console.log('ttttttttt',this);
-        // const scaleX = this.get('scaleX');
-        // const scaleY = this.get('scaleY');
-        // const width = this.get('width');
-        // const height = this.get('height');
-        // const originalState = this.get('originalState');
-        // const content = this.get('content');
-        // content.image.left *= scaleX;
-        // content.image.top *= scaleY;
-        // content.left *= scaleX;
-        // content.top *= scaleY;
-        // content.image.left = originalState.left - content.left;
-        // content.left = content.image.left;
-        // content.image.top = originalState.top;
-        // content.top = content.image.top;
-        this.set({
+        const content = this.get('content');
+        const top = this.get('top');
+        const left = this.get('left');
+        const topShift = top - this.get('originalState').top;
+        const leftShift = left - this.get('originalState').left;
 
-            // width: width * scaleX,
-            // height: height * scaleY,
-            // content
+        content.image.top = content.top = content.originalState.top + topShift;
+        content.image.left = content.left = content.originalState.left + leftShift;
+
+        this.set({
+            top: this.get('originalState').top,
+            left: this.get('originalState').left,
         });
-        // this.setCoords();
         this.applyPattern();
     },
 
@@ -164,7 +149,7 @@ fabric.Container = fabric.util.createClass(fabric.Rect, {
             scaleY: 1,
             width: width * scaleX,
             height: height * scaleY,
-            content
+            content: content
         });
     },
 
@@ -172,49 +157,30 @@ fabric.Container = fabric.util.createClass(fabric.Rect, {
         const content = this.get('content');
         const scaleX = this.get('scaleX');
         const scaleY = this.get('scaleY');
-        const width = this.get('width');
-        const height = this.get('height');
 
-        // console.log('_______________scale', scaleX, scaleY);
         content.width = content.image.width = content.originalState.width * scaleX;
         content.height = content.image.height = content.originalState.height * scaleY;
 
-        // content.left = content.originalState.left;
-        // const contentOriginalLeft = this.get('originalState').left;
-        // const leftShift = content.originalState.left - content.left;
-
-        // console.log('_______________scale', content.originalState);
-        // const top = this.get('top');
-        // const originalTop = this.get('originalState').top;
-        // const topShift = originalTop - top;
-
-        // content.left = content.originalState.left + leftShift;
-        // content.image.left = content.left;
-
-        // content.top = content.originalState.top + topShift;
-        // content.image.top = content.top;
-
         this.set({
+            left: this.get('originalState').left,
             scaleX: 1,
             scaleY: 1,
-            // width: width * scaleX,
-            // height: height * scaleY,
-            content
+            content: content
         });
     },
 
     _move: function() {
         if (!this.get('dblClick')) {
             // this._moveContainer();
-            this.set({
-                lockMovementX: false,
-                lockMovementY: false
-            });
+            // this.set({
+            //     lockMovementX: false,
+            //     lockMovementY: false
+            // });
         } else {
-            this.set({
-                lockMovementX: true,
-                lockMovementY: true
-            });
+            // this.set({
+            //     lockMovementX: true,
+            //     lockMovementY: true
+            // });
             this._moveContainerContent();
         }
         // this.setCoords();
